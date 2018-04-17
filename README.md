@@ -2,6 +2,8 @@
 
 **Proxy server for an embedded Chromium browser in your Unity games.**
 
+![Embedded Chrome browser ingame in Unity](screenshot.PNG)
+
 🚧 This is a work in progress, do not use this 🚧
 
 ## Features
