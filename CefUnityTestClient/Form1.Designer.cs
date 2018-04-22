@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.btnCon = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.btnDis = new System.Windows.Forms.Button();
@@ -35,6 +36,7 @@
             this.lblFrames = new System.Windows.Forms.Label();
             this.lblPkIn = new System.Windows.Forms.Label();
             this.lblPkOut = new System.Windows.Forms.Label();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -90,6 +92,7 @@
             this.lblFrames.TabIndex = 5;
             this.lblFrames.Text = "Frame counter";
             this.lblFrames.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.toolTip1.SetToolTip(this.lblFrames, "Frame counter");
             // 
             // lblPkIn
             // 
@@ -101,6 +104,7 @@
             this.lblPkIn.TabIndex = 6;
             this.lblPkIn.Text = "Packets in";
             this.lblPkIn.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.toolTip1.SetToolTip(this.lblPkIn, "Packets in");
             // 
             // lblPkOut
             // 
@@ -112,6 +116,7 @@
             this.lblPkOut.TabIndex = 7;
             this.lblPkOut.Text = "Packets out";
             this.lblPkOut.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.toolTip1.SetToolTip(this.lblPkOut, "Packets out");
             // 
             // Form1
             // 
@@ -145,6 +150,7 @@
         private System.Windows.Forms.Label lblFrames;
         private System.Windows.Forms.Label lblPkIn;
         private System.Windows.Forms.Label lblPkOut;
+        private System.Windows.Forms.ToolTip toolTip1;
     }
 }
 

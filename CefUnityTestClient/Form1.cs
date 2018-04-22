@@ -52,12 +52,20 @@ namespace CefUnityTestClient
             {
                 while (this.Visible && !this.Disposing && !this.IsDisposed)
                 {
-                    Invoke(new Action(() =>
+                    if (controller != null && controller.Connected)
                     {
-                        lblFrames.Text = frameCounter.ToString();
-                        lblPkIn.Text = controller.MessagesReceivedCount.ToString();
-                        lblPkOut.Text = controller.MessagesSentCount.ToString();
-                    }));
+                        Invoke(new Action(() =>
+                        {
+                            if (frameCounter > 0)
+                                lblFrames.Text = frameCounter.ToString();
+
+                            if (controller.MessagesReceivedCount > 0)
+                                lblPkIn.Text = controller.MessagesReceivedCount.ToString();
+
+                            if (controller.MessagesSentCount > 0)
+                                lblPkOut.Text = controller.MessagesSentCount.ToString();
+                        }));
+                    }
 
                     Thread.Sleep(100);
                 }
@@ -112,6 +120,7 @@ namespace CefUnityTestClient
         {
             // Grey out form
             this.Enabled = false;
+            btnCon.Text = "Connecting...";
             Application.DoEvents();
 
             // Try and handle connect attempt
@@ -126,6 +135,7 @@ namespace CefUnityTestClient
 
             // Restore
             this.Enabled = true;
+            btnCon.Text = "Connect";
         }
 
         private void PictureBox1_MouseMove(object sender, MouseEventArgs e)
