@@ -138,6 +138,16 @@ namespace CefUnityServer
 
                     runner.AddTask(new SetMouseTask(new CefUnityLib.Messages.MouseEventPipeMessage(incomingMessage.Payload)));
                     break;
+                    
+                case PipeProto.OPCODE_KEY_EVENT:
+
+                    runner.AddTask(new SendKeyEventTask(new CefUnityLib.Messages.KeyEventPipeMessage(incomingMessage.Payload)));
+                    break;
+
+                default:
+
+                    Logr.Log("Pipe server error. Could not route message due to unrecognized packet opcode:", incomingMessage.Opcode);
+                    break;
             }
         }
 

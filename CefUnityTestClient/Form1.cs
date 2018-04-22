@@ -30,6 +30,24 @@ namespace CefUnityTestClient
 
             controller = new CefController();
             controller.MessageReceived += MessageReceived;
+
+            this.KeyPreview = true;
+            this.KeyUp += Form1_KeyUp;
+            this.KeyDown += Form1_KeyDown;
+
+            pictureBox1.MouseMove += PictureBox1_MouseMove;
+        }
+
+        private void Form1_KeyDown(object sender, KeyEventArgs e)
+        {
+            controller.SendMessage(new KeyEventPipeMessage(KeyEventPipeMessage.TYPE_KEY_DOWN, e.KeyValue));
+            e.Handled = true;
+        }
+
+        private void Form1_KeyUp(object sender, KeyEventArgs e)
+        {
+            controller.SendMessage(new KeyEventPipeMessage(KeyEventPipeMessage.TYPE_KEY_UP, e.KeyValue));
+            e.Handled = true;
         }
 
         public void MessageReceived(object sender, PipeProtoMessage e)
@@ -53,30 +71,25 @@ namespace CefUnityTestClient
             controller.Connect();
         }
 
-        private void pictureBox1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void pictureBox1_MouseHover(object sender, EventArgs e)
+        private void PictureBox1_MouseMove(object sender, MouseEventArgs e)
         {
             var pos = pictureBox1.PointToClient(Cursor.Position);
 
-            controller.SendMouseEvent(MouseEventPipeMessage.TYPE_MOVE, pos.X, pos.Y);
+            controller.SendMouseEvent(MouseEventPipeMessage.TYPE_MOVE, pos.X, pos.Y, (CefUnityLib.Helpers.MouseButtons)e.Button);
         }
 
         private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
         {
             var pos = pictureBox1.PointToClient(Cursor.Position);
 
-            controller.SendMouseEvent(MouseEventPipeMessage.TYPE_MOUSE_DOWN, pos.X, pos.Y);
+            controller.SendMouseEvent(MouseEventPipeMessage.TYPE_MOUSE_DOWN, pos.X, pos.Y, (CefUnityLib.Helpers.MouseButtons)e.Button);
         }
 
         private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
         {
             var pos = pictureBox1.PointToClient(Cursor.Position);
 
-            controller.SendMouseEvent(MouseEventPipeMessage.TYPE_MOUSE_UP, pos.X, pos.Y);
+            controller.SendMouseEvent(MouseEventPipeMessage.TYPE_MOUSE_UP, pos.X, pos.Y, (CefUnityLib.Helpers.MouseButtons)e.Button);
         }
     }
 }

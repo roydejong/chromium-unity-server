@@ -50,6 +50,7 @@
     <Compile Include="TaskRunner.cs" />
     <Compile Include="Tasks\RepaintFrameTask.cs" />
     <Compile Include="Tasks\SendFrameTask.cs" />
+    <Compile Include="Tasks\SendKeyEventTask.cs" />
     <Compile Include="Tasks\SetMouseTask.cs" />
   </ItemGroup>
   <ItemGroup>

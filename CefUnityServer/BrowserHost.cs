@@ -1,5 +1,7 @@
 ﻿using CefSharp;
 using CefSharp.OffScreen;
+using CefUnityLib.Helpers;
+using CefUnityLib.Messages;
 using CefUnityServer.Tasks;
 using System;
 using System.Collections.Generic;
@@ -75,34 +77,85 @@ namespace CefUnityServer
         }
 
         protected bool LmbIsDown = false;
-        
-        public void ClickLeftMouse(int x, int y)
-        {
-            this.webBrowser.GetBrowserHost().SendMouseClickEvent(x, y, MouseButtonType.Left, false, 1, CefEventFlags.None);
-            LmbIsDown = true;
-        }
 
-        public void ReleaseLeftMouse(int x, int y)
-        {
-            this.webBrowser.GetBrowserHost().SendMouseClickEvent(x, y, MouseButtonType.Left, true, 0, CefEventFlags.None);
-            LmbIsDown = false;
-        }
+        public object CefMouseButtonType { get; private set; }
 
-        public void MoveMouse(int x, int y)
+        public void SendKeyDownEvent(int keyCodeNum)
         {
-            if (LmbIsDown)
+            var keyEvent = new KeyEvent
             {
-                this.webBrowser.GetBrowserHost().SendMouseClickEvent(x, y, MouseButtonType.Left, false, 0, CefEventFlags.None);
+                FocusOnEditableField = true,
+                IsSystemKey = false,
+                Type = KeyEventType.KeyDown,
+                NativeKeyCode = keyCodeNum
+            };
+
+            this.webBrowser.GetBrowserHost().SendKeyEvent(keyEvent);
+        }
+
+        public void SendKeyUpEvent(int keyCodeNum)
+        {
+            var keyEvent = new KeyEvent
+            {
+                FocusOnEditableField = true,
+                IsSystemKey = false,
+                Type = KeyEventType.KeyUp,
+                NativeKeyCode = keyCodeNum
+            };
+
+            this.webBrowser.GetBrowserHost().SendKeyEvent(keyEvent);
+        }
+
+        public void HandleMouseEvent(MouseEventPipeMessage eventMessage)
+        {
+            var host = this.webBrowser.GetBrowserHost();
+            host.SendFocusEvent(true);
+
+            // Read X & Y coords
+            int x = eventMessage.CoordX;
+            int y = eventMessage.CoordY;
+
+            // Read primary event button & generate modifier struct
+            var modifiers = new CefEventFlags();
+            var mouseButton = MouseButtonType.Left;
+
+            if (eventMessage.MouseButtons == MouseButtons.Left)
+            {
+                modifiers |= CefEventFlags.LeftMouseButton;
+                mouseButton = MouseButtonType.Left;
+            }
+
+            if (eventMessage.MouseButtons == MouseButtons.Right)
+            {
+                modifiers |= CefEventFlags.RightMouseButton;
+                mouseButton = MouseButtonType.Right;
+            }
+
+            if (eventMessage.MouseButtons == MouseButtons.Middle)
+            {
+                modifiers |= CefEventFlags.MiddleMouseButton;
+                mouseButton = MouseButtonType.Middle;
+            }
+
+            // Generate generic event
+            var mouseEvent = new MouseEvent(x, y, modifiers);
+
+            // Dispatch event to browser host
+            if (eventMessage.MouseEventType == MouseEventPipeMessage.TYPE_MOVE)
+            {
+                host.SendMouseMoveEvent(mouseEvent, false);
             }
             else
             {
-                this.webBrowser.GetBrowserHost().SendMouseClickEvent(x, y, MouseButtonType.Left, true, 0, CefEventFlags.None);
+                bool isUpEvent = (eventMessage.MouseEventType == MouseEventPipeMessage.TYPE_MOUSE_UP);
+                host.SendMouseClickEvent(mouseEvent, mouseButton, isUpEvent, 1);
             }
         }
 
         private void WebBrowser_LoadingStateChanged(object sender, LoadingStateChangedEventArgs e)
         {
-            LmbIsDown = false;
+            // Ensure browser is in "focus" mode so that mouse move events are handled
+            this.webBrowser.GetBrowserHost().SendFocusEvent(true);
         }
 
         private void WebBrowser_LoadError(object sender, LoadErrorEventArgs e)

@@ -18,18 +18,7 @@ namespace CefUnityServer.Tasks
 
         public void Run(BrowserHost host, PipeServer server)
         {
-            if (message.MouseEventType == MouseEventPipeMessage.TYPE_MOVE)
-            {
-                host.MoveMouse(message.CoordX, message.CoordY);
-            }
-            else if (message.MouseEventType == MouseEventPipeMessage.TYPE_MOUSE_DOWN)
-            {
-                host.ClickLeftMouse(message.CoordX, message.CoordY);
-            }
-            else if (message.MouseEventType == MouseEventPipeMessage.TYPE_MOUSE_UP)
-            {
-                host.ReleaseLeftMouse(message.CoordX, message.CoordY);
-            }
+            host.HandleMouseEvent(message);
         }
     }
 }

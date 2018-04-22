@@ -1,4 +1,5 @@
-﻿using CefUnityLib.Messages;
+﻿using CefUnityLib.Helpers;
+using CefUnityLib.Messages;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -58,9 +59,9 @@ namespace CefUnityLib
             return false;
         }
 
-        public void SendMouseEvent(byte eventType, Int32 coordX, Int32 coordY)
+        public void SendMouseEvent(byte eventType, Int32 coordX, Int32 coordY, MouseButtons mouseButtons)
         {
-            SendMessage(new MouseEventPipeMessage(eventType, coordX, coordY));
+            SendMessage(new MouseEventPipeMessage(eventType, coordX, coordY, mouseButtons));
         }
 
 #pragma warning disable CS4014
