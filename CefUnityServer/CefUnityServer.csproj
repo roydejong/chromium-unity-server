@@ -52,6 +52,7 @@
     <Compile Include="Tasks\SendFrameTask.cs" />
     <Compile Include="Tasks\SendKeyEventTask.cs" />
     <Compile Include="Tasks\SetMouseTask.cs" />
+    <Compile Include="Tasks\ShutdownTask.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

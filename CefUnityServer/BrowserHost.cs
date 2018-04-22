@@ -109,8 +109,7 @@ namespace CefUnityServer
         public void HandleMouseEvent(MouseEventPipeMessage eventMessage)
         {
             var host = this.webBrowser.GetBrowserHost();
-            host.SendFocusEvent(true);
-
+            
             // Read X & Y coords
             int x = eventMessage.CoordX;
             int y = eventMessage.CoordY;

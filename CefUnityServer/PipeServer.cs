@@ -36,6 +36,20 @@ namespace CefUnityServer
             LastActivity = DateTime.Now;
         }
 
+        protected void DoAutoShutdownCheck()
+        {
+            var now = DateTime.Now;
+            var then = LastActivity;
+            var diff = now - then;
+
+            if (Math.Abs(diff.TotalSeconds) >= NO_COMM_AUTO_SHUTDOWN_AFTER_SECS)
+            {
+                Logr.Log(String.Format("Named pipe server: No network activity! Starting automatic shutdown. (Triggered after {0} seconds of inactivity.)", NO_COMM_AUTO_SHUTDOWN_AFTER_SECS));
+                Program.ShutDown();
+                return;
+            }
+        }
+
         public void StartAsNewTask()
         {
             // Background task thread: Auto shutdown after inactivity
@@ -43,17 +57,7 @@ namespace CefUnityServer
             {
                 while (KeepAlive)
                 {
-                    var now = DateTime.Now;
-                    var then = LastActivity;
-                    var diff = now - then;
-
-                    if (diff.TotalSeconds > NO_COMM_AUTO_SHUTDOWN_AFTER_SECS)
-                    {
-                        Logr.Log(String.Format("Named pipe server: No network activity! Starting automatic shutdown. (Triggered after {0} seconds of inactivity.)", NO_COMM_AUTO_SHUTDOWN_AFTER_SECS));
-                        Program.ShutDown();
-                        return;
-                    }
-
+                    DoAutoShutdownCheck();
                     Thread.Sleep(1000);
                 }
             }));
@@ -65,6 +69,8 @@ namespace CefUnityServer
 
                 while (KeepAlive)
                 {
+                    DoAutoShutdownCheck();
+
                     if (stream == null)
                     {
                         stream = new NamedPipeServerStream(pipeName, PipeDirection.InOut, 1, PipeTransmissionMode.Byte, PipeOptions.Asynchronous);
@@ -142,6 +148,11 @@ namespace CefUnityServer
                 case PipeProto.OPCODE_KEY_EVENT:
 
                     runner.AddTask(new SendKeyEventTask(new CefUnityLib.Messages.KeyEventPipeMessage(incomingMessage.Payload)));
+                    break;
+
+                case PipeProto.OPCODE_SHUTDOWN:
+
+                    runner.AddTask(new ShutdownTask());
                     break;
 
                 default:
