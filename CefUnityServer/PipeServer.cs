@@ -39,6 +39,14 @@ namespace CefUnityServer
         protected void DoAutoShutdownCheck()
         {
             var now = DateTime.Now;
+
+            if (KeepAlive && stream != null && stream.CanRead)
+            {
+                // Stream is still open, update activity and move on
+                LastActivity = now;
+                return;
+            }
+
             var then = LastActivity;
             var diff = now - then;
 
