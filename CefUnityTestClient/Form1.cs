@@ -110,7 +110,22 @@ namespace CefUnityTestClient
 
         private void btnConnect_Click(object sender, EventArgs e)
         {
-            controller.Connect();
+            // Grey out form
+            this.Enabled = false;
+            Application.DoEvents();
+
+            // Try and handle connect attempt
+            try
+            {
+                controller.Connect();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Connection failure:\r\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+
+            // Restore
+            this.Enabled = true;
         }
 
         private void PictureBox1_MouseMove(object sender, MouseEventArgs e)
