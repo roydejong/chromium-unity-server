@@ -186,6 +186,18 @@ namespace CefUnityServer
                 host.SendMouseClickEvent(mouseEvent, mouseButton, isUpEvent, 1);
             }
         }
+        
+        public void HandleMouseWheelEvent(MouseWheelEventPipeMessage mouseWheelMsg)
+        {
+            var host = this.webBrowser.GetBrowserHost();
+            
+            int x = mouseWheelMsg.CoordX;
+            int y = mouseWheelMsg.CoordY;
+            int delta = mouseWheelMsg.Delta;
+
+            var mouseEvent = new MouseEvent(x, y, CefEventFlags.None);
+            host.SendMouseWheelEvent(mouseEvent, 0, delta);
+        }
 
         private void WebBrowser_LoadingStateChanged(object sender, LoadingStateChangedEventArgs e)
         {

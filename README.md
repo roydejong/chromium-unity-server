@@ -13,7 +13,7 @@
 - Use all the modern web features in Chromium.
 - Fast data exchange via named pipes, making high FPS possible.
 - Pass mouse and keyboard events from game to browser.
-- Input support for key combinations and gestures like dragging and selecting.
+- Input support for key combinations, dragging, selecting and scrolling.
 - Bi-directional messaging between your C# code and in-browser JavaScript code.
 
 The project consists of two parts: First, the server, which manages a CEF (Chrome Embedded Framework) browser instance.

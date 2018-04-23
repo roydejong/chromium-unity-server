@@ -152,7 +152,12 @@ namespace CefUnityServer
 
                     runner.AddTask(new SetMouseTask(new CefUnityLib.Messages.MouseEventPipeMessage(incomingMessage.Payload)));
                     break;
-                    
+
+                case PipeProto.OPCODE_MOUSE_WHEEL_EVENT:
+
+                    runner.AddTask(new SendMouseWheelEventTask(new CefUnityLib.Messages.MouseWheelEventPipeMessage(incomingMessage.Payload)));
+                    break;
+
                 case PipeProto.OPCODE_KEY_EVENT:
 
                     runner.AddTask(new SendKeyEventTask(new CefUnityLib.Messages.KeyEventPipeMessage(incomingMessage.Payload)));

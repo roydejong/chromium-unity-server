@@ -20,6 +20,7 @@ namespace CefUnityLib
         public const byte OPCODE_MOUSE_EVENT = 6;
         public const byte OPCODE_KEY_EVENT = 7;
         public const byte OPCODE_SHUTDOWN = 8;
+        public const byte OPCODE_MOUSE_WHEEL_EVENT = 9;
 
         public static byte[] BytesToProtoMessage(byte[] input, byte opcode)
         {

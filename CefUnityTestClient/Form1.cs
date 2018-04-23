@@ -45,6 +45,7 @@ namespace CefUnityTestClient
             this.PreviewKeyDown += Form1_PreviewKeyDown;
 
             pictureBox1.MouseMove += PictureBox1_MouseMove;
+            pictureBox1.MouseWheel += PictureBox1_MouseWheel;
 
             this.Shown += Form1_Shown;
 
@@ -211,6 +212,11 @@ namespace CefUnityTestClient
             var pos = pictureBox1.PointToClient(Cursor.Position);
 
             controller.SendMouseEvent(MouseEventPipeMessage.TYPE_MOUSE_UP, pos.X, pos.Y, (CefUnityLib.Helpers.MouseButtons)e.Button);
+        }
+        
+        private void PictureBox1_MouseWheel(object sender, MouseEventArgs e)
+        {
+            controller.SendMouseWheelEvent(e.X, e.Y, e.Delta);
         }
 
         private void btnShut_Click(object sender, EventArgs e)

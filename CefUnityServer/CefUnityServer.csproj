@@ -51,6 +51,7 @@
     <Compile Include="Tasks\RepaintFrameTask.cs" />
     <Compile Include="Tasks\SendFrameTask.cs" />
     <Compile Include="Tasks\SendKeyEventTask.cs" />
+    <Compile Include="Tasks\SendMouseWheelEventTask.cs" />
     <Compile Include="Tasks\SetMouseTask.cs" />
     <Compile Include="Tasks\ShutdownTask.cs" />
   </ItemGroup>

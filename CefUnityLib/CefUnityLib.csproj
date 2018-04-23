@@ -36,6 +36,7 @@
     <Compile Include="Helpers\Keys.cs" />
     <Compile Include="Helpers\MouseButtons.cs" />
     <Compile Include="Messages\KeyEventPipeMessage.cs" />
+    <Compile Include="Messages\MouseWheelEventPipeMessage.cs" />
     <Compile Include="Messages\MouseEventPipeMessage.cs" />
     <Compile Include="PipeProto.cs" />
     <Compile Include="PipeProtoMessage.cs" />
