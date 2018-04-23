@@ -159,33 +159,32 @@ namespace CefUnityLib
                 {
                     ConnectionStateChanged.Invoke(this, Connected);
                 }
+                
+                // Send ping message
+                var pingMessage = new PipeProtoMessage
+                {
+                    Opcode = PipeProto.OPCODE_PING
+                };
+
+                try
+                {
+                    pingMessage.WriteToClientStream(stream, true);
+                    statMsgsSent++;
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("Send message failure: " + ex.Message + " " + ex.StackTrace.ToString());
+
+                    if (Debugger.IsAttached)
+                    {
+                        Debugger.Break();
+                    }
+
+                    Disconnect();
+                }
 
                 while (Connected)
                 {
-                    // Send ping message
-                    var pingMessage = new PipeProtoMessage
-                    {
-                        Opcode = PipeProto.OPCODE_PING
-                    };
-
-                    try
-                    {
-                        pingMessage.WriteToClientStream(stream, true);
-                        statMsgsSent++;
-                    } 
-                    catch (Exception ex)
-                    {
-                        Debug.WriteLine("Send message failure: " + ex.Message + " " + ex.StackTrace.ToString());
-
-                        if (Debugger.IsAttached)
-                        {
-                            Debugger.Break();
-                        }
-
-                        Disconnect();
-                        break;
-                    }
-
                     // Read next message
                     PipeProtoMessage incomingMessage = null;
 
