@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CefUnityLib.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,6 +15,7 @@ namespace CefUnityLib.Messages
 
         public const byte IDX_EVENT_TYPE = 0;
         public const byte IDX_KEY_CODE = 1;
+        public const byte IDX_MODIFIERS = 2;
         
         public KeyEventPipeMessage(byte[] payload)
         {
@@ -21,14 +23,21 @@ namespace CefUnityLib.Messages
             Payload = payload;
         }
 
-        public KeyEventPipeMessage(byte eventType, Int32 keyCode)
+        public KeyEventPipeMessage(byte eventType, Keys keys, Keys modifiers = Helpers.Keys.None)
         {
             Opcode = PipeProto.OPCODE_KEY_EVENT;
 
-            Payload = new byte[1 + 4 + 4]; // [Opcode/1b] + [Int32/KeyCode/4]
+            Payload = new byte[1 + 4 + 4 + 4]; // [Opcode/1b] + [Int32/KeyCode/4] + [Int32/Modifiers/4]
 
             KeyEventType = eventType;
-            KeyCode = keyCode;
+            Keys = keys;
+            Modifiers = modifiers;
+        }
+
+        public KeyEventPipeMessage(byte eventType, int keyCode, Keys modifiers = Helpers.Keys.None)
+            : this(eventType, Keys.None, modifiers)
+        {
+            KeysInt = keyCode;
         }
 
         public byte KeyEventType
@@ -44,7 +53,20 @@ namespace CefUnityLib.Messages
             }
         }
 
-        public Int32 KeyCode
+        public Keys Keys
+        {
+            get
+            {
+                return (Keys)KeysInt;
+            }
+
+            set
+            {
+                KeysInt = (int)value;
+            }
+        }
+
+        public int KeysInt
         {
             get
             {
@@ -54,6 +76,19 @@ namespace CefUnityLib.Messages
             set
             {
                 BitConverter.GetBytes(value).CopyTo(Payload, IDX_KEY_CODE);
+            }
+        }
+
+        public Keys Modifiers
+        {
+            get
+            {
+                return (Keys)BitConverter.ToInt32(Payload.Skip(IDX_MODIFIERS).Take(4).ToArray(), 0);
+            }
+
+            set
+            {
+                BitConverter.GetBytes((int)value).CopyTo(Payload, IDX_MODIFIERS);
             }
         }
     }

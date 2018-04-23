@@ -85,14 +85,52 @@ namespace CefUnityServer
             var host = this.webBrowser.GetBrowserHost();
 
             // Get character info
-            int character = keyMessage.KeyCode;
+            int character = 0;
 
-            Logr.Log("KEY: ", character, keyMessage.KeyEventType);
+            var cefKeyModifiers = new CefEventFlags();
+
+            if (keyMessage.KeyEventType != KeyEventPipeMessage.TYPE_KEY_CHAR)
+            {
+                var keyFlags = keyMessage.Keys;
+                var keyFlagsChar = keyFlags & Keys.KeyCode; // bit shift to remove modifiers from character code
+
+                character = (int)keyFlagsChar; 
+
+                if (keyMessage.Modifiers.HasFlag(Keys.Control))
+                {
+                    cefKeyModifiers |= CefEventFlags.ControlDown;
+                }
+                
+                if (keyMessage.Modifiers.HasFlag(Keys.Shift))
+                {
+                    cefKeyModifiers |= CefEventFlags.ShiftDown;
+                }
+
+                if (keyMessage.Modifiers.HasFlag(Keys.Alt))
+                {
+                    cefKeyModifiers |= CefEventFlags.AltDown;
+                }
+
+                //if (keyMessage.KeyEventType == 0)
+                //{
+                //    Logr.Log(
+                //        keyMessage.KeyEventType <= 0 ? "Key down:" : "Key up:",
+                //        keyMessage.Keys,
+                //        keyMessage.Modifiers != Keys.None ? "+ Mod " + keyMessage.Modifiers.ToString() : ""
+                //    );
+                //}
+            }
+            else
+            {
+                character = (int)keyMessage.Keys;
+                //Logr.Log("Char down:", (char)character, character);
+            }
 
             var keyEvent = new KeyEvent()
             {
                 Type = KeyEventType.Char,
-                WindowsKeyCode = character
+                WindowsKeyCode = character,
+                Modifiers = cefKeyModifiers
             };
 
             if (keyMessage.KeyEventType == KeyEventPipeMessage.TYPE_KEY_DOWN)

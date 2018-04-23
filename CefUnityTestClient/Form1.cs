@@ -132,21 +132,21 @@ namespace CefUnityTestClient
         private void Form1_KeyPress(object sender, KeyPressEventArgs e)
         {
             pictureBox1.Focus();
-            controller.SendMessage(new KeyEventPipeMessage(KeyEventPipeMessage.TYPE_KEY_CHAR, (int)e.KeyChar));
+            controller.SendKeyCharEvent(e.KeyChar);
             e.Handled = true;
         }
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
             pictureBox1.Focus();
-            controller.SendMessage(new KeyEventPipeMessage(KeyEventPipeMessage.TYPE_KEY_DOWN, (int)e.KeyCode));
+            controller.SendKeyEvent(KeyEventPipeMessage.TYPE_KEY_DOWN, (CefUnityLib.Helpers.Keys)e.KeyCode, (CefUnityLib.Helpers.Keys)e.Modifiers);
             e.Handled = true;
         }
 
         private void Form1_KeyUp(object sender, KeyEventArgs e)
         {
             pictureBox1.Focus();
-            controller.SendMessage(new KeyEventPipeMessage(KeyEventPipeMessage.TYPE_KEY_UP, (int)e.KeyCode));
+            controller.SendKeyEvent(KeyEventPipeMessage.TYPE_KEY_UP, (CefUnityLib.Helpers.Keys)e.KeyCode, (CefUnityLib.Helpers.Keys)e.Modifiers);
             e.Handled = true;
         }
 

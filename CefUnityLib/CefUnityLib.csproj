@@ -33,6 +33,7 @@
   <ItemGroup>
     <Compile Include="CefController.cs" />
     <Compile Include="Consts.cs" />
+    <Compile Include="Helpers\Keys.cs" />
     <Compile Include="Helpers\MouseButtons.cs" />
     <Compile Include="Messages\KeyEventPipeMessage.cs" />
     <Compile Include="Messages\MouseEventPipeMessage.cs" />

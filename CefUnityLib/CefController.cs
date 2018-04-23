@@ -100,6 +100,16 @@ namespace CefUnityLib
             SendMessage(new MouseEventPipeMessage(eventType, coordX, coordY, mouseButtons));
         }
 
+        public void SendKeyEvent(byte eventType, Keys keys, Keys modifiers)
+        {
+            SendMessage(new KeyEventPipeMessage(eventType, keys, modifiers));
+        }
+
+        public void SendKeyCharEvent(int keyCharCode, Keys modifiers = Keys.None)
+        {
+            SendMessage(new KeyEventPipeMessage(KeyEventPipeMessage.TYPE_KEY_CHAR, keyCharCode, modifiers));
+        }
+
         public void SendShutdownMessage()
         {
             SendMessage(new PipeProtoMessage
