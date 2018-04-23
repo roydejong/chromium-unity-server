@@ -13,18 +13,7 @@ namespace CefUnityServer.Tasks
 
         public void Run(BrowserHost host, PipeServer server)
         {
-            switch (this.keyEventMsg.KeyEventType)
-            {
-                case KeyEventPipeMessage.TYPE_KEY_DOWN:
-                    host.SendKeyDownEvent(keyEventMsg.KeyCode);
-                    break;
-                case KeyEventPipeMessage.TYPE_KEY_UP:
-                    host.SendKeyUpEvent(keyEventMsg.KeyCode);
-                    break;
-                default:
-                    Logr.Log("Key event task failed: Unrecognized event type:", this.keyEventMsg.KeyEventType);
-                    break;
-            }
+            host.HandleKeyEvent(keyEventMsg);
         }
     }
 }

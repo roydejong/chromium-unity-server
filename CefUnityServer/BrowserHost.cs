@@ -80,57 +80,55 @@ namespace CefUnityServer
 
         public object CefMouseButtonType { get; private set; }
 
-        public void SendKeyDownEvent(int keyCodeNum)
+        public void HandleKeyEvent(KeyEventPipeMessage keyMessage)
         {
-            var keyEvent = new KeyEvent
+            var host = this.webBrowser.GetBrowserHost();
+
+            // Get character info
+            int character = keyMessage.KeyCode;
+
+            Logr.Log("KEY: ", character, keyMessage.KeyEventType);
+
+            var keyEvent = new KeyEvent()
             {
-                FocusOnEditableField = true,
-                IsSystemKey = false,
-                Type = KeyEventType.KeyDown,
-                NativeKeyCode = keyCodeNum
+                Type = KeyEventType.Char,
+                WindowsKeyCode = character
             };
 
-            this.webBrowser.GetBrowserHost().SendKeyEvent(keyEvent);
+            if (keyMessage.KeyEventType == KeyEventPipeMessage.TYPE_KEY_DOWN)
+                keyEvent.Type = KeyEventType.KeyDown;
+
+            if (keyMessage.KeyEventType == KeyEventPipeMessage.TYPE_KEY_UP)
+                keyEvent.Type = KeyEventType.KeyUp;
+
+            host.SendKeyEvent(keyEvent);
         }
 
-        public void SendKeyUpEvent(int keyCodeNum)
-        {
-            var keyEvent = new KeyEvent
-            {
-                FocusOnEditableField = true,
-                IsSystemKey = false,
-                Type = KeyEventType.KeyUp,
-                NativeKeyCode = keyCodeNum
-            };
-
-            this.webBrowser.GetBrowserHost().SendKeyEvent(keyEvent);
-        }
-
-        public void HandleMouseEvent(MouseEventPipeMessage eventMessage)
+        public void HandleMouseEvent(MouseEventPipeMessage mouseMessage)
         {
             var host = this.webBrowser.GetBrowserHost();
             
             // Read X & Y coords
-            int x = eventMessage.CoordX;
-            int y = eventMessage.CoordY;
+            int x = mouseMessage.CoordX;
+            int y = mouseMessage.CoordY;
 
             // Read primary event button & generate modifier struct
             var modifiers = new CefEventFlags();
             var mouseButton = MouseButtonType.Left;
 
-            if (eventMessage.MouseButtons == MouseButtons.Left)
+            if (mouseMessage.MouseButtons == MouseButtons.Left)
             {
                 modifiers |= CefEventFlags.LeftMouseButton;
                 mouseButton = MouseButtonType.Left;
             }
 
-            if (eventMessage.MouseButtons == MouseButtons.Right)
+            if (mouseMessage.MouseButtons == MouseButtons.Right)
             {
                 modifiers |= CefEventFlags.RightMouseButton;
                 mouseButton = MouseButtonType.Right;
             }
 
-            if (eventMessage.MouseButtons == MouseButtons.Middle)
+            if (mouseMessage.MouseButtons == MouseButtons.Middle)
             {
                 modifiers |= CefEventFlags.MiddleMouseButton;
                 mouseButton = MouseButtonType.Middle;
@@ -140,13 +138,13 @@ namespace CefUnityServer
             var mouseEvent = new MouseEvent(x, y, modifiers);
 
             // Dispatch event to browser host
-            if (eventMessage.MouseEventType == MouseEventPipeMessage.TYPE_MOVE)
+            if (mouseMessage.MouseEventType == MouseEventPipeMessage.TYPE_MOVE)
             {
                 host.SendMouseMoveEvent(mouseEvent, false);
             }
             else
             {
-                bool isUpEvent = (eventMessage.MouseEventType == MouseEventPipeMessage.TYPE_MOUSE_UP);
+                bool isUpEvent = (mouseMessage.MouseEventType == MouseEventPipeMessage.TYPE_MOUSE_UP);
                 host.SendMouseClickEvent(mouseEvent, mouseButton, isUpEvent, 1);
             }
         }

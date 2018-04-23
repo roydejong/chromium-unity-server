@@ -41,10 +41,26 @@ namespace CefUnityTestClient
             this.KeyPreview = true;
             this.KeyUp += Form1_KeyUp;
             this.KeyDown += Form1_KeyDown;
+            this.KeyPress += Form1_KeyPress;
+            this.PreviewKeyDown += Form1_PreviewKeyDown;
 
             pictureBox1.MouseMove += PictureBox1_MouseMove;
 
             this.Shown += Form1_Shown;
+
+            SetKeyEventsForControls(Controls);
+        }
+
+        private void SetKeyEventsForControls(Control.ControlCollection cc)
+        {
+            if (cc != null)
+            {
+                foreach (Control control in cc)
+                {
+                    control.PreviewKeyDown += new PreviewKeyDownEventHandler(Form1_PreviewKeyDown);
+                    SetKeyEventsForControls(control.Controls);
+                }
+            }
         }
 
         private void Form1_Shown(object sender, EventArgs e)
@@ -108,15 +124,29 @@ namespace CefUnityTestClient
             }));
         }
 
+        private void Form1_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            e.IsInputKey = true;
+        }
+
+        private void Form1_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            pictureBox1.Focus();
+            controller.SendMessage(new KeyEventPipeMessage(KeyEventPipeMessage.TYPE_KEY_CHAR, (int)e.KeyChar));
+            e.Handled = true;
+        }
+
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
-            controller.SendMessage(new KeyEventPipeMessage(KeyEventPipeMessage.TYPE_KEY_DOWN, e.KeyValue));
+            pictureBox1.Focus();
+            controller.SendMessage(new KeyEventPipeMessage(KeyEventPipeMessage.TYPE_KEY_DOWN, (int)e.KeyCode));
             e.Handled = true;
         }
 
         private void Form1_KeyUp(object sender, KeyEventArgs e)
         {
-            controller.SendMessage(new KeyEventPipeMessage(KeyEventPipeMessage.TYPE_KEY_UP, e.KeyValue));
+            pictureBox1.Focus();
+            controller.SendMessage(new KeyEventPipeMessage(KeyEventPipeMessage.TYPE_KEY_UP, (int)e.KeyCode));
             e.Handled = true;
         }
 

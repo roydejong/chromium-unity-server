@@ -10,6 +10,7 @@ namespace CefUnityLib.Messages
     {
         public const byte TYPE_KEY_DOWN = 0;
         public const byte TYPE_KEY_UP = 1;
+        public const byte TYPE_KEY_CHAR = 2;
 
         public const byte IDX_EVENT_TYPE = 0;
         public const byte IDX_KEY_CODE = 1;
