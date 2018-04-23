@@ -37,6 +37,7 @@
             this.lblPkIn = new System.Windows.Forms.Label();
             this.lblPkOut = new System.Windows.Forms.Label();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.lblFps = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -118,11 +119,25 @@
             this.lblPkOut.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.toolTip1.SetToolTip(this.lblPkOut, "Packets out");
             // 
+            // lblFps
+            // 
+            this.lblFps.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblFps.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.lblFps.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblFps.ForeColor = System.Drawing.Color.Yellow;
+            this.lblFps.Location = new System.Drawing.Point(792, 12);
+            this.lblFps.Name = "lblFps";
+            this.lblFps.Size = new System.Drawing.Size(110, 37);
+            this.lblFps.TabIndex = 8;
+            this.lblFps.Text = "FPS Counter";
+            this.lblFps.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1046, 842);
+            this.Controls.Add(this.lblFps);
             this.Controls.Add(this.lblPkOut);
             this.Controls.Add(this.lblPkIn);
             this.Controls.Add(this.lblFrames);
@@ -151,6 +166,7 @@
         private System.Windows.Forms.Label lblPkIn;
         private System.Windows.Forms.Label lblPkOut;
         private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.Label lblFps;
     }
 }
 

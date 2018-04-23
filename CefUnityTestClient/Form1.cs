@@ -20,7 +20,10 @@ namespace CefUnityTestClient
         private Bitmap _texture;
         private CefController controller;
 
-        private ulong frameCounter;
+        private ulong frameCounterStat;
+
+        private int frameCounterCounter;
+        private int frameCounterCurrent;
 
         public Form1()
         {
@@ -52,20 +55,38 @@ namespace CefUnityTestClient
             {
                 while (this.Visible && !this.Disposing && !this.IsDisposed)
                 {
-                    if (controller != null && controller.Connected)
+                    bool haveFps = false;
+                    int fps = 0;
+
+                    if (frameCounterCounter >= 10)
                     {
-                        Invoke(new Action(() =>
+                        fps = frameCounterCurrent;
+
+                        frameCounterCounter = 0;
+                        frameCounterCurrent = 0;
+
+                        haveFps = true;
+                    }
+
+                    frameCounterCounter++;
+
+                    Invoke(new Action(() =>
+                    {
+                        if (controller != null && controller.Connected)
                         {
-                            if (frameCounter > 0)
-                                lblFrames.Text = frameCounter.ToString();
+                            if (frameCounterStat > 0)
+                                lblFrames.Text = frameCounterStat.ToString();
 
                             if (controller.MessagesReceivedCount > 0)
                                 lblPkIn.Text = controller.MessagesReceivedCount.ToString();
 
                             if (controller.MessagesSentCount > 0)
                                 lblPkOut.Text = controller.MessagesSentCount.ToString();
-                        }));
-                    }
+
+                            if (haveFps)
+                                lblFps.Text = fps.ToString() + " FPS";
+                        }
+                    }));
 
                     Thread.Sleep(100);
                 }
@@ -105,7 +126,9 @@ namespace CefUnityTestClient
             {
                 case PipeProto.OPCODE_FRAME:
 
-                    frameCounter++;
+                    frameCounterStat++;
+                    frameCounterCurrent++;
+
                     Rectangle rect = new Rectangle(0, 0, pictureBox1.Width, pictureBox1.Height);
                     BitmapData bmpData = _texture.LockBits(rect, ImageLockMode.WriteOnly, _texture.PixelFormat);
                     IntPtr ptr = bmpData.Scan0;
