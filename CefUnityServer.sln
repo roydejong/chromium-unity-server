@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CefUnityLib", "CefUnityLib\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CefUnityTestClient", "CefUnityTestClient\CefUnityTestClient.csproj", "{4ED19265-8AA2-4E49-BC1A-ED3E6BBB0109}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleUnityIntegration", "SampleUnityIntegration\SampleUnityIntegration.csproj", "{2408CB96-2502-410C-99C4-61F45455B50F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,14 @@ Global
 		{4ED19265-8AA2-4E49-BC1A-ED3E6BBB0109}.Release|Any CPU.ActiveCfg = Release|x64
 		{4ED19265-8AA2-4E49-BC1A-ED3E6BBB0109}.Release|x64.ActiveCfg = Release|x64
 		{4ED19265-8AA2-4E49-BC1A-ED3E6BBB0109}.Release|x64.Build.0 = Release|x64
+		{2408CB96-2502-410C-99C4-61F45455B50F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2408CB96-2502-410C-99C4-61F45455B50F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2408CB96-2502-410C-99C4-61F45455B50F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{2408CB96-2502-410C-99C4-61F45455B50F}.Debug|x64.Build.0 = Debug|Any CPU
+		{2408CB96-2502-410C-99C4-61F45455B50F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2408CB96-2502-410C-99C4-61F45455B50F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2408CB96-2502-410C-99C4-61F45455B50F}.Release|x64.ActiveCfg = Release|Any CPU
+		{2408CB96-2502-410C-99C4-61F45455B50F}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
