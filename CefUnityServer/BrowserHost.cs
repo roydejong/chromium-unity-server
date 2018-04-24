@@ -39,41 +39,62 @@ namespace CefUnityServer
 
         public async void Start()
         {
+            // Settings modifiers
             this.settings.WindowlessFrameRate = 30;
 
+            // CEF init with custom settings
+            var cefSettings = new CefSettings();
+            cefSettings.CefCommandLineArgs.Add("disable-extensions", "1");
+            cefSettings.CefCommandLineArgs.Add("disable-gpu", "1");
+            cefSettings.CefCommandLineArgs.Add("disable-gpu-compositing", "1");
+            cefSettings.CefCommandLineArgs.Add("enable-begin-frame-scheduling", "1");
+            cefSettings.CefCommandLineArgs.Add("enable-experimental-web-platform-features", "1");
+            cefSettings.CefCommandLineArgs.Add("enable-media-stream", "1");
+            cefSettings.CefCommandLineArgs.Add("enable-precise-memory-info", "1");
+            Cef.Initialize(cefSettings);
+
+            // Request context
             var reqCtxSettings = new RequestContextSettings
             {
                 CachePath = "",
                 IgnoreCertificateErrors = false,
                 PersistSessionCookies = false,
-                PersistUserPreferences = false
+                PersistUserPreferences = false,
             };
 
             this.requestContext = new RequestContext(reqCtxSettings);
-
+            
+            // Browser window
             this.webBrowser = new ChromiumWebBrowser("about:blank", this.settings, this.requestContext, false);
             this.webBrowser.CreateBrowser(IntPtr.Zero);
 
+            // Resize and wait for init
             Resize(1024, 768);
             WaitForBrowserInit();
 
-            await LoadPageAsync("https://www.youtube.com/watch?v=gsAqDppP3Ec");
-
+            // Bind events
             this.webBrowser.OnPaint += WebBrowser_OnPaint;
             this.webBrowser.LoadError += WebBrowser_LoadError;
             this.webBrowser.LoadingStateChanged += WebBrowser_LoadingStateChanged;
+
+            // Load initial page (TEST / TEMP)
+            await LoadPageAsync("https://www.youtube.com/watch?v=KaOC9danxNo");
         }
 
         public void Stop()
         {
             if (this.webBrowser != null)
             {
+                this.webBrowser.GetBrowserHost().CloseBrowser(true);
+
                 this.webBrowser.Dispose();
                 this.webBrowser = null;
 
                 this.requestContext.Dispose();
                 this.requestContext = null;
             }
+
+            Cef.Shutdown();
         }
 
         protected bool LmbIsDown = false;
