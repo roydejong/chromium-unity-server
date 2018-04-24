@@ -87,23 +87,30 @@ namespace CefUnityTestClient
 
                     frameCounterCounter++;
 
-                    Invoke(new Action(() =>
+                    try
                     {
-                        if (controller != null && controller.Connected)
+                        Invoke(new Action(() =>
                         {
-                            if (frameCounterStat > 0)
-                                lblFrames.Text = frameCounterStat.ToString();
+                            if (controller != null && controller.Connected)
+                            {
+                                if (frameCounterStat > 0)
+                                    lblFrames.Text = frameCounterStat.ToString();
 
-                            if (controller.MessagesReceivedCount > 0)
-                                lblPkIn.Text = controller.MessagesReceivedCount.ToString();
+                                if (controller.MessagesReceivedCount > 0)
+                                    lblPkIn.Text = controller.MessagesReceivedCount.ToString();
 
-                            if (controller.MessagesSentCount > 0)
-                                lblPkOut.Text = controller.MessagesSentCount.ToString();
+                                if (controller.MessagesSentCount > 0)
+                                    lblPkOut.Text = controller.MessagesSentCount.ToString();
 
-                            if (haveFps)
-                                lblFps.Text = fps.ToString() + " FPS";
-                        }
-                    }));
+                                if (haveFps)
+                                    lblFps.Text = fps.ToString() + " FPS";
+                            }
+                        }));
+                    }
+                    catch (ObjectDisposedException)
+                    {
+                        return;
+                    }
 
                     Thread.Sleep(100);
                 }
