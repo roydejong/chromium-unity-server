@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace CefUnityServer
 {
-    public class BrowserHost : IContextMenuHandler
+    public class BrowserHost : IContextMenuHandler, ILifeSpanHandler
     {
         protected const int BROWSER_INIT_TIMEOUT_MS = 15000;
 
@@ -67,6 +67,7 @@ namespace CefUnityServer
             // Browser window
             this.webBrowser = new ChromiumWebBrowser("about:blank", this.settings, this.requestContext, false);
             this.webBrowser.MenuHandler = this;
+            this.webBrowser.LifeSpanHandler = this;
             this.webBrowser.CreateBrowser(IntPtr.Zero);
 
             // Resize and wait for init
@@ -334,12 +335,33 @@ namespace CefUnityServer
 
         public void OnContextMenuDismissed(IWebBrowser browserControl, IBrowser browser, IFrame frame)
         {
-            
+            //
         }
 
         public bool RunContextMenu(IWebBrowser browserControl, IBrowser browser, IFrame frame, IContextMenuParams parameters, IMenuModel model, IRunContextMenuCallback callback)
         {
             return false;
+        }
+
+        public bool OnBeforePopup(IWebBrowser browserControl, IBrowser browser, IFrame frame, string targetUrl, string targetFrameName, WindowOpenDisposition targetDisposition, bool userGesture, IPopupFeatures popupFeatures, IWindowInfo windowInfo, IBrowserSettings browserSettings, ref bool noJavascriptAccess, out IWebBrowser newBrowser)
+        {
+            newBrowser = null;
+            return true;
+        }
+
+        public void OnAfterCreated(IWebBrowser browserControl, IBrowser browser)
+        {
+            //
+        }
+
+        public bool DoClose(IWebBrowser browserControl, IBrowser browser)
+        {
+            return false;
+        }
+
+        public void OnBeforeClose(IWebBrowser browserControl, IBrowser browser)
+        {
+            //
         }
     }
 }
