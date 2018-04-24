@@ -123,6 +123,14 @@ namespace CefUnityLib
             });
         }
 
+        public void SendRepaintRequest()
+        {
+            SendMessage(new PipeProtoMessage
+            {
+                Opcode = PipeProto.OPCODE_FRAME
+            });
+        }
+
         public void Disconnect()
         {
             if (stream != null)
@@ -197,6 +205,9 @@ namespace CefUnityLib
 
                     Disconnect();
                 }
+
+                // Ask for a repaint
+                SendRepaintRequest();
 
                 while (Connected)
                 {
