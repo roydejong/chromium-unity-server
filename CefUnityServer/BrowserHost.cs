@@ -40,7 +40,7 @@ namespace CefUnityServer
         public async void Start()
         {
             // Settings modifiers
-            this.settings.WindowlessFrameRate = 30;
+            this.settings.WindowlessFrameRate = 60;
 
             // CEF init with custom settings
             var cefSettings = new CefSettings();
@@ -262,10 +262,12 @@ namespace CefUnityServer
         [HandleProcessCorruptedStateExceptions]
         private void WebBrowser_OnPaint(object sender, OnPaintEventArgs e)
         {
-            if (paintBitmap == null)
+            if (paintBitmap == null || e.NumberOfBytes != paintBitmap.Length)
             {
-                paintBufferSize = this.webBrowser.Size.Width * this.webBrowser.Size.Height * 4;
+                paintBufferSize = e.NumberOfBytes;// this.webBrowser.Size.Width * this.webBrowser.Size.Height * e.BytesPerPixel;
                 paintBitmap = new byte[paintBufferSize];
+
+                Logr.Log("Paint buffer: Resizing to", paintBufferSize, "bytes");
             }
 
             try
