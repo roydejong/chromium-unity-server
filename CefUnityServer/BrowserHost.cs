@@ -45,13 +45,14 @@ namespace CefUnityServer
 
             // CEF init with custom settings
             var cefSettings = new CefSettings();
-            cefSettings.CefCommandLineArgs.Add("disable-extensions", "1");
-            cefSettings.CefCommandLineArgs.Add("disable-gpu", "1");
-            cefSettings.CefCommandLineArgs.Add("disable-gpu-compositing", "1");
-            cefSettings.CefCommandLineArgs.Add("enable-begin-frame-scheduling", "1");
-            cefSettings.CefCommandLineArgs.Add("enable-experimental-web-platform-features", "1");
-            cefSettings.CefCommandLineArgs.Add("enable-media-stream", "1");
-            cefSettings.CefCommandLineArgs.Add("enable-precise-memory-info", "1");
+            cefSettings.CefCommandLineArgs["disable-extensions"] = "1";
+            cefSettings.CefCommandLineArgs["disable-gpu"] = "1";
+            cefSettings.CefCommandLineArgs["disable-gpu-compositing"] = "1";
+            cefSettings.CefCommandLineArgs["enable-begin-frame-scheduling"] = "1";
+            cefSettings.CefCommandLineArgs["enable-experimental-web-platform-features"] = "1";
+            cefSettings.CefCommandLineArgs["enable-media-stream"] = "1";
+            cefSettings.CefCommandLineArgs["enable-precise-memory-info"] = "1";
+            cefSettings.CefCommandLineArgs["autoplay-policy"] = "no-user-gesture-required";
             cefSettings.CefCommandLineArgs.Remove("mute-audio");
             Cef.Initialize(cefSettings);
 
