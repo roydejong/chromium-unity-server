@@ -52,6 +52,7 @@ namespace CefUnityServer
             cefSettings.CefCommandLineArgs.Add("enable-experimental-web-platform-features", "1");
             cefSettings.CefCommandLineArgs.Add("enable-media-stream", "1");
             cefSettings.CefCommandLineArgs.Add("enable-precise-memory-info", "1");
+            cefSettings.CefCommandLineArgs.Remove("mute-audio");
             Cef.Initialize(cefSettings);
 
             // Request context
