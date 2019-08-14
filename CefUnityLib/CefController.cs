@@ -139,7 +139,7 @@ namespace CefUnityLib
                 {
                     stream.Dispose();
                 }
-                catch (Exception e) { }
+                catch (Exception) { }
             }
 
             stream = null;
@@ -218,7 +218,7 @@ namespace CefUnityLib
                     {
                         incomingMessage = PipeProtoMessage.ReadFromStream(stream);
                     }
-                    catch (Exception ex) { }
+                    catch (Exception) { }
 
                     if (incomingMessage != null)
                     {
@@ -230,16 +230,7 @@ namespace CefUnityLib
                                 statMsgsReceived++;
                             }
                         }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine(ex.Message);
-                            Debug.WriteLine(ex.Message + " @ " + ex.StackTrace);
-
-                            if (Debugger.IsAttached)
-                            {
-                                Debugger.Break();
-                            }
-                        }
+                        catch (Exception) { }
                     }
                 }
             }));
