@@ -14,26 +14,18 @@ namespace CefUnityServer
         protected BrowserHost host;
         protected PipeServer server;
 
-        protected List<ITaskRunnable> taskList;
+        protected Queue<ITaskRunnable> taskList;
 
         public TaskRunner()
         {
-            this.taskList = new List<ITaskRunnable>();
-        }
-
-        public void ClearTasks()
-        {
-            lock (taskList)
-            {
-                this.taskList.Clear();
-            }
+            this.taskList = new Queue<ITaskRunnable>();
         }
 
         public void AddTask(ITaskRunnable task)
         {
             lock (taskList)
             {
-                this.taskList.Add(task);
+                this.taskList.Enqueue(task);
             }
         }
 
@@ -57,8 +49,7 @@ namespace CefUnityServer
                     {
                         while (taskList.Count > 0)
                         {
-                            var nextTask = taskList[0];
-                            taskList.RemoveAt(0);
+                            var nextTask = taskList.Dequeue();
 
                             try
                             {
