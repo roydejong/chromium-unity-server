@@ -165,22 +165,16 @@ namespace CefUnityTestClient
                     var rect = new Rectangle(0, 0, pictureBox1.Width, pictureBox1.Height);
                     var texture = new Bitmap(defWidth, defHeight);
                     var bmpData = texture.LockBits(rect, ImageLockMode.WriteOnly, texture.PixelFormat);
+                    
+                    IntPtr ptr = bmpData.Scan0;
+                    System.Runtime.InteropServices.Marshal.Copy(e.Payload, 0, ptr, e.Payload.Length);
 
-                    try
-                    {
-                        IntPtr ptr = bmpData.Scan0;
-                        System.Runtime.InteropServices.Marshal.Copy(e.Payload, 0, ptr, e.Payload.Length);
-                        pictureBox1.Image = texture;
-                    }
-                    finally
-                    {
-                        texture.UnlockBits(bmpData);
-                    }
+                    texture.UnlockBits(bmpData);
+                    pictureBox1.Image = texture;
 
                     // NB: Disposing of the texture causes awful issues where the PictureBox will try to access it and crash.
                     // Also, re-using the same texture causes locking issues when testing high FPS.
                     // Conclusion: we are intentionally leaking memory here, and hoping GC will clean up unused textures fast enough.
-                    
                     break;
             }
         }
