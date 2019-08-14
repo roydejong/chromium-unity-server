@@ -209,7 +209,7 @@ namespace CefUnityServer
                     stream.Close();
                     stream.Dispose();
                 }
-                catch (Exception e) { }
+                catch (Exception) { }
             }
 
             stream = null;

@@ -17,39 +17,20 @@ namespace CefUnityTestClient
 {
     public partial class Form1 : Form
     {
-        private Bitmap _texture;
-        private CefController controller;
+        private CefController _controller;
 
-        private ulong frameCounterStat;
+        private ulong _frameCounterStat;
+        private int _frameCounterCounter;
+        private int _frameCounterCurrent;
 
-        private int frameCounterCounter;
-        private int frameCounterCurrent;
+        private int defWidth = 1024;
+        private int defHeight = 768;
 
         public Form1()
         {
             InitializeComponent();
-
-            int defWidth = 1024;
-            int defHeight = 768;
-
-            _texture = new Bitmap(defWidth, defHeight);
-
-            controller = new CefController();
-            controller.MessageReceived += MessageReceived;
-            controller.ConnectionStateChanged += ConnectionChanged;
-
-            this.KeyPreview = true;
-            this.KeyUp += Form1_KeyUp;
-            this.KeyDown += Form1_KeyDown;
-            this.KeyPress += Form1_KeyPress;
-            this.PreviewKeyDown += Form1_PreviewKeyDown;
-
-            pictureBox1.MouseMove += PictureBox1_MouseMove;
-            pictureBox1.MouseWheel += PictureBox1_MouseWheel;
-
+            
             this.Shown += Form1_Shown;
-
-            SetKeyEventsForControls(Controls);
         }
 
         private void SetKeyEventsForControls(Control.ControlCollection cc)
@@ -66,7 +47,20 @@ namespace CefUnityTestClient
 
         private void Form1_Shown(object sender, EventArgs e)
         {
-            ConnectionChanged(controller, false);
+            _controller = new CefController();
+            _controller.MessageReceived += MessageReceived;
+            _controller.ConnectionStateChanged += ConnectionChanged;
+
+            this.KeyPreview = true;
+            this.KeyUp += Form1_KeyUp;
+            this.KeyDown += Form1_KeyDown;
+            this.KeyPress += Form1_KeyPress;
+            this.PreviewKeyDown += Form1_PreviewKeyDown;
+
+            pictureBox1.MouseMove += PictureBox1_MouseMove;
+            pictureBox1.MouseWheel += PictureBox1_MouseWheel;
+
+            ConnectionChanged(_controller, false);
 
             Task.Run(new Action(() =>
             {
@@ -75,32 +69,32 @@ namespace CefUnityTestClient
                     bool haveFps = false;
                     int fps = 0;
 
-                    if (frameCounterCounter >= 10)
+                    if (_frameCounterCounter >= 10)
                     {
-                        fps = frameCounterCurrent;
+                        fps = _frameCounterCurrent;
 
-                        frameCounterCounter = 0;
-                        frameCounterCurrent = 0;
+                        _frameCounterCounter = 0;
+                        _frameCounterCurrent = 0;
 
                         haveFps = true;
                     }
 
-                    frameCounterCounter++;
+                    _frameCounterCounter++;
 
                     try
                     {
                         Invoke(new Action(() =>
                         {
-                            if (controller != null && controller.Connected)
+                            if (_controller != null && _controller.Connected)
                             {
-                                if (frameCounterStat > 0)
-                                    lblFrames.Text = frameCounterStat.ToString();
+                                if (_frameCounterStat > 0)
+                                    lblFrames.Text = _frameCounterStat.ToString();
 
-                                if (controller.MessagesReceivedCount > 0)
-                                    lblPkIn.Text = controller.MessagesReceivedCount.ToString();
+                                if (_controller.MessagesReceivedCount > 0)
+                                    lblPkIn.Text = _controller.MessagesReceivedCount.ToString();
 
-                                if (controller.MessagesSentCount > 0)
-                                    lblPkOut.Text = controller.MessagesSentCount.ToString();
+                                if (_controller.MessagesSentCount > 0)
+                                    lblPkOut.Text = _controller.MessagesSentCount.ToString();
 
                                 if (haveFps)
                                     lblFps.Text = fps.ToString() + " FPS";
@@ -115,6 +109,8 @@ namespace CefUnityTestClient
                     Thread.Sleep(100);
                 }
             }));
+            
+            SetKeyEventsForControls(Controls);
         }
 
         private void ConnectionChanged(object sender, bool connected)
@@ -140,21 +136,21 @@ namespace CefUnityTestClient
         private void Form1_KeyPress(object sender, KeyPressEventArgs e)
         {
             pictureBox1.Focus();
-            controller.SendKeyCharEvent(e.KeyChar);
+            _controller.SendKeyCharEvent(e.KeyChar);
             e.Handled = true;
         }
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
             pictureBox1.Focus();
-            controller.SendKeyEvent(KeyEventPipeMessage.TYPE_KEY_DOWN, (CefUnityLib.Helpers.Keys)e.KeyCode, (CefUnityLib.Helpers.Keys)e.Modifiers);
+            _controller.SendKeyEvent(KeyEventPipeMessage.TYPE_KEY_DOWN, (CefUnityLib.Helpers.Keys)e.KeyCode, (CefUnityLib.Helpers.Keys)e.Modifiers);
             e.Handled = true;
         }
 
         private void Form1_KeyUp(object sender, KeyEventArgs e)
         {
             pictureBox1.Focus();
-            controller.SendKeyEvent(KeyEventPipeMessage.TYPE_KEY_UP, (CefUnityLib.Helpers.Keys)e.KeyCode, (CefUnityLib.Helpers.Keys)e.Modifiers);
+            _controller.SendKeyEvent(KeyEventPipeMessage.TYPE_KEY_UP, (CefUnityLib.Helpers.Keys)e.KeyCode, (CefUnityLib.Helpers.Keys)e.Modifiers);
             e.Handled = true;
         }
 
@@ -163,16 +159,22 @@ namespace CefUnityTestClient
             switch (e.Opcode)
             {
                 case PipeProto.OPCODE_FRAME:
-
-                    frameCounterStat++;
-                    frameCounterCurrent++;
-
-                    Rectangle rect = new Rectangle(0, 0, pictureBox1.Width, pictureBox1.Height);
-                    BitmapData bmpData = _texture.LockBits(rect, ImageLockMode.WriteOnly, _texture.PixelFormat);
+                    _frameCounterStat++;
+                    _frameCounterCurrent++;
+                    
+                    var rect = new Rectangle(0, 0, pictureBox1.Width, pictureBox1.Height);
+                    var texture = new Bitmap(defWidth, defHeight);
+                    var bmpData = texture.LockBits(rect, ImageLockMode.WriteOnly, texture.PixelFormat);
+                    
                     IntPtr ptr = bmpData.Scan0;
                     System.Runtime.InteropServices.Marshal.Copy(e.Payload, 0, ptr, e.Payload.Length);
-                    _texture.UnlockBits(bmpData);
-                    pictureBox1.Image = _texture;
+
+                    texture.UnlockBits(bmpData);
+                    pictureBox1.Image = texture;
+
+                    // NB: Disposing of the texture causes awful issues where the PictureBox will try to access it and crash.
+                    // Also, re-using the same texture causes locking issues when testing high FPS.
+                    // Conclusion: we are intentionally leaking memory here, and hoping GC will clean up unused textures fast enough.
                     break;
             }
         }
@@ -187,7 +189,7 @@ namespace CefUnityTestClient
             // Try and handle connect attempt
             try
             {
-                controller.Connect();
+                _controller.Connect();
             }
             catch (Exception ex)
             {
@@ -203,7 +205,7 @@ namespace CefUnityTestClient
         {
             var pos = pictureBox1.PointToClient(Cursor.Position);
 
-            controller.SendMouseEvent(MouseEventPipeMessage.TYPE_MOVE, pos.X, pos.Y, (CefUnityLib.Helpers.MouseButtons)e.Button);
+            _controller.SendMouseEvent(MouseEventPipeMessage.TYPE_MOVE, pos.X, pos.Y, (CefUnityLib.Helpers.MouseButtons)e.Button);
 
         }
 
@@ -211,29 +213,29 @@ namespace CefUnityTestClient
         {
             var pos = pictureBox1.PointToClient(Cursor.Position);
 
-            controller.SendMouseEvent(MouseEventPipeMessage.TYPE_MOUSE_DOWN, pos.X, pos.Y, (CefUnityLib.Helpers.MouseButtons)e.Button);
+            _controller.SendMouseEvent(MouseEventPipeMessage.TYPE_MOUSE_DOWN, pos.X, pos.Y, (CefUnityLib.Helpers.MouseButtons)e.Button);
         }
 
         private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
         {
             var pos = pictureBox1.PointToClient(Cursor.Position);
 
-            controller.SendMouseEvent(MouseEventPipeMessage.TYPE_MOUSE_UP, pos.X, pos.Y, (CefUnityLib.Helpers.MouseButtons)e.Button);
+            _controller.SendMouseEvent(MouseEventPipeMessage.TYPE_MOUSE_UP, pos.X, pos.Y, (CefUnityLib.Helpers.MouseButtons)e.Button);
         }
         
         private void PictureBox1_MouseWheel(object sender, MouseEventArgs e)
         {
-            controller.SendMouseWheelEvent(e.X, e.Y, e.Delta);
+            _controller.SendMouseWheelEvent(e.X, e.Y, e.Delta);
         }
 
         private void btnShut_Click(object sender, EventArgs e)
         {
-            controller.SendShutdownMessage();
+            _controller.SendShutdownMessage();
         }
 
         private void btnDis_Click(object sender, EventArgs e)
         {
-            controller.Disconnect();
+            _controller.Disconnect();
         }
 
         private void Form1_Load(object sender, EventArgs e)

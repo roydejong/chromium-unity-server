@@ -41,16 +41,19 @@ namespace CefUnityServer
         {
             // Settings modifiers
             this.settings.WindowlessFrameRate = 60;
+            this.settings.BackgroundColor = 0x00;
 
             // CEF init with custom settings
             var cefSettings = new CefSettings();
-            cefSettings.CefCommandLineArgs.Add("disable-extensions", "1");
-            cefSettings.CefCommandLineArgs.Add("disable-gpu", "1");
-            cefSettings.CefCommandLineArgs.Add("disable-gpu-compositing", "1");
-            cefSettings.CefCommandLineArgs.Add("enable-begin-frame-scheduling", "1");
-            cefSettings.CefCommandLineArgs.Add("enable-experimental-web-platform-features", "1");
-            cefSettings.CefCommandLineArgs.Add("enable-media-stream", "1");
-            cefSettings.CefCommandLineArgs.Add("enable-precise-memory-info", "1");
+            cefSettings.CefCommandLineArgs["disable-extensions"] = "1";
+            cefSettings.CefCommandLineArgs["disable-gpu"] = "1";
+            cefSettings.CefCommandLineArgs["disable-gpu-compositing"] = "1";
+            cefSettings.CefCommandLineArgs["enable-begin-frame-scheduling"] = "1";
+            cefSettings.CefCommandLineArgs["enable-experimental-web-platform-features"] = "1";
+            cefSettings.CefCommandLineArgs["enable-media-stream"] = "1";
+            cefSettings.CefCommandLineArgs["enable-precise-memory-info"] = "1";
+            cefSettings.CefCommandLineArgs["autoplay-policy"] = "no-user-gesture-required";
+            cefSettings.CefCommandLineArgs.Remove("mute-audio");
             Cef.Initialize(cefSettings);
 
             // Request context
@@ -63,19 +66,19 @@ namespace CefUnityServer
             };
 
             this.requestContext = new RequestContext(reqCtxSettings);
-            
+
             // Browser window
             this.webBrowser = new ChromiumWebBrowser("about:blank", this.settings, this.requestContext, false);
             this.webBrowser.MenuHandler = this;
             this.webBrowser.LifeSpanHandler = this;
-            this.webBrowser.CreateBrowser(IntPtr.Zero);
+            this.webBrowser.CreateBrowser();
 
             // Resize and wait for init
             Resize(1024, 768);
             WaitForBrowserInit();
 
             // Bind events
-            this.webBrowser.OnPaint += WebBrowser_OnPaint;
+            this.webBrowser.Paint += WebBrowser_Paint;
             this.webBrowser.LoadError += WebBrowser_LoadError;
             this.webBrowser.LoadingStateChanged += WebBrowser_LoadingStateChanged;
 
@@ -261,11 +264,16 @@ namespace CefUnityServer
         }
 
         [HandleProcessCorruptedStateExceptions]
-        private void WebBrowser_OnPaint(object sender, OnPaintEventArgs e)
+        private void WebBrowser_Paint(object sender, OnPaintEventArgs e)
         {
-            if (paintBitmap == null || e.NumberOfBytes != paintBitmap.Length)
+            // pixel data for the image: width * height * 4 bytes
+            // BGRA image with upper-left origin
+
+            int numberOfBytes = e.Height * e.Width * 4;
+
+            if (paintBitmap == null || numberOfBytes != paintBitmap.Length)
             {
-                paintBufferSize = e.NumberOfBytes;// this.webBrowser.Size.Width * this.webBrowser.Size.Height * e.BytesPerPixel;
+                paintBufferSize = numberOfBytes;
                 paintBitmap = new byte[paintBufferSize];
 
                 Logr.Log("Paint buffer: Resizing to", paintBufferSize, "bytes");
@@ -275,7 +283,7 @@ namespace CefUnityServer
             {
                 Marshal.Copy(e.BufferHandle, paintBitmap, 0, paintBufferSize);
             }
-            catch (AccessViolationException ex)
+            catch (AccessViolationException)
             {
                 Logr.Log("WARN: Marshal copy failed: Access violation while reading frame buffer.");
             }
