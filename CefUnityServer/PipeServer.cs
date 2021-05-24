@@ -40,7 +40,7 @@ namespace CefUnityServer
         {
             var now = DateTime.Now;
 
-            if (KeepAlive && stream != null && stream.CanRead)
+            if (KeepAlive && stream != null && stream.IsConnected && stream.CanRead)
             {
                 // Stream is still open, update activity and move on
                 LastActivity = now;
